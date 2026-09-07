@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+--ink: #241F1B;
+--paper: #F7F3EC;
+--paper-tint: #EFE8D8;
+--card: #FDFBF7;
+--muted: #6B6255;
+--accent: #2B3A67;
+--wax: #8C2F39;
+--border: #D9D0C1;
+}
+
+body {
+background-color: var(--paper);
+color: var(--ink);
+font-family: 'Figtree', sans-serif;
+}
