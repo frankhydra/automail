@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light theme (default) */
+:root {
+    --ink: #241F1B;
+    --paper: #F7F3EC;
+    --paper-tint: #EFE8D8;
+    --card: #FDFBF7;
+    --muted: #6B6255;
+    --border: #D9D0C1;
+}
+
+/* Dark theme - overrides the same variable names, so every Tailwind utility
+   built from them (bg-card, text-ink, bg-paper, border-border, ...) updates
+   automatically wherever it's used, with no per-page dark: class needed. */
+.dark {
+    --ink: #F2EDE4;
+    --paper: #211D19;
+    --paper-tint: #2B2621;
+    --card: #2A251F;
+    --muted: #B3A896;
+    --border: #453E35;
+}
+
+body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: 'Figtree', sans-serif;
+    transition: background-color 150ms ease, color 150ms ease;
+}
