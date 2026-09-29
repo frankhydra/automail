@@ -43,6 +43,22 @@ export default {
                 'danger-tint': '#F3E4E3',
                 info: '#2B3A67',
                 'info-tint': '#E7EAF1',
+                // Older pages still use Tailwind's stock "indigo" classes (bright
+                // purple-blue buttons and links). Pointing indigo at the brand navy
+                // retints all of them at once, so they match the rest of the app
+                // until each page is redesigned properly.
+                indigo: {
+                    50: '#EEF0F6',
+                    100: '#DDE1EE',
+                    200: '#BAC3DC',
+                    300: '#8F9DC4',
+                    400: '#5F72A6',
+                    500: '#3F5088',
+                    600: '#2B3A67',
+                    700: '#222F55',
+                    800: '#1A2442',
+                    900: '#121A30',
+                },
             },
         },
     },

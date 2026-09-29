@@ -30,3 +30,12 @@ body {
     font-family: 'Figtree', sans-serif;
     transition: background-color 150ms ease, color 150ms ease;
 }
+
+/* Text on solid brand-colored backgrounds must stay light in both themes.
+   --paper turns dark in dark mode, so "text-paper" on a navy or red button
+   would otherwise become nearly unreadable there. */
+.dark .bg-accent,
+.dark .bg-danger,
+.dark .bg-wax {
+    color: #FFFFFF;
+}

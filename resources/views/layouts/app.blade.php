@@ -19,30 +19,39 @@
             })();
         </script>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
-
         <!-- Scripts & Styles -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-paper text-ink selection:bg-accent selection:text-paper">
-        <div class="min-h-screen bg-paper">
+        <div class="min-h-screen flex" x-data="{ sidebarOpen: false }">
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-card shadow-sm border-b border-border">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+            <div class="flex-1 min-w-0 flex flex-col">
+                <!-- Mobile top bar: sidebar is off-canvas below md, opened via this button -->
+                <div class="md:hidden flex items-center justify-between bg-card border-b border-border px-4 h-14 shrink-0">
+                    <a href="{{ route('dashboard') }}" class="font-extrabold text-lg tracking-tight text-accent flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-wax inline-block"></span>
+                        AutoMail
+                    </a>
+                    <button @click="sidebarOpen = true" class="text-ink">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                    </button>
+                </div>
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                <!-- Page Heading -->
+                @isset($header)
+                    <header class="bg-card shadow-sm border-b border-border">
+                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endisset
+
+                <!-- Page Content -->
+                <main class="flex-1">
+                    {{ $slot }}
+                </main>
+            </div>
         </div>
     </body>
 </html>

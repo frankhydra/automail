@@ -1,4 +1,7 @@
 <x-guest-layout>
+    <h2 class="text-xl font-bold text-ink mb-1">Create your account</h2>
+    <p class="text-sm text-muted mb-6">Start sending campaigns in minutes.</p>
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -40,7 +43,7 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+            <a class="underline text-sm text-muted hover:text-ink rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
 
