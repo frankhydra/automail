@@ -84,8 +84,48 @@ class TemplateBlockRendererTest extends TestCase
     public function test_types_lists_every_supported_block(): void
     {
         $this->assertSame(
-            ['header', 'text', 'image', 'button', 'divider', 'columns', 'footer'],
+            ['header', 'text', 'image', 'button', 'divider', 'spacer', 'columns', 'social', 'footer'],
             TemplateBlockRenderer::types()
         );
+    }
+
+    public function test_preview_text_is_added_as_a_hidden_preheader(): void
+    {
+        $html = TemplateBlockRenderer::render([['type' => 'text', 'content' => 'Body']], 'Inbox snippet');
+
+        $this->assertStringContainsString('display:none', $html);
+        $this->assertStringContainsString('Inbox snippet', $html);
+    }
+
+    public function test_javascript_links_are_neutralised(): void
+    {
+        $html = TemplateBlockRenderer::render([
+            ['type' => 'button', 'label' => 'Go', 'url' => 'javascript:alert(1)', 'color' => '#ff0000'],
+            ['type' => 'image', 'url' => 'https://example.com/a.png', 'link' => 'javascript:alert(2)'],
+        ]);
+
+        $this->assertStringNotContainsString('javascript:', $html);
+    }
+
+    public function test_an_image_without_a_url_and_empty_social_links_render_nothing(): void
+    {
+        $html = TemplateBlockRenderer::render([
+            ['type' => 'image', 'url' => ''],
+            ['type' => 'social'],
+        ]);
+
+        $this->assertStringNotContainsString('<img', $html);
+        $this->assertStringNotContainsString('Twitter', $html);
+    }
+
+    public function test_social_and_spacer_blocks_render(): void
+    {
+        $html = TemplateBlockRenderer::render([
+            ['type' => 'social', 'twitter' => 'https://twitter.com/acme'],
+            ['type' => 'spacer', 'height' => '40'],
+        ]);
+
+        $this->assertStringContainsString('https://twitter.com/acme', $html);
+        $this->assertStringContainsString('height:40px', $html);
     }
 }

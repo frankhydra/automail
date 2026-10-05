@@ -27,7 +27,16 @@ class CampaignController extends Controller
         $organization = $user ? $user->currentOrganization() : null;
 
         $campaigns = $organization
-            ? $organization->campaigns()->with('sendingIdentity')->withCount('recipients')->latest()->get()
+            ? $organization->campaigns()->standalone()
+                ->with('sendingIdentity')
+                ->withCount([
+                    'recipients',
+                    'recipients as sent_recipients' => fn ($q) => $q->where('status', 'sent'),
+                    'recipients as opened_recipients' => fn ($q) => $q->where('status', 'sent')->whereNotNull('opened_at'),
+                    'recipients as clicked_recipients' => fn ($q) => $q->where('status', 'sent')->whereNotNull('clicked_at'),
+                ])
+                ->latest()
+                ->get()
             : collect();
 
         return view('campaigns.index', compact('campaigns'));

@@ -1,48 +1,51 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-ink leading-tight">
-                {{ __('Email Templates') }}
-            </h2>
-            <a href="{{ route('templates.create') }}" class="inline-flex items-center px-4 py-2 bg-accent border border-transparent rounded-md font-semibold text-xs text-paper uppercase tracking-widest hover:opacity-90 transition">
-                + Create Template
-            </a>
-        </div>
-    </x-slot>
+    <div class="py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-extrabold tracking-tight text-ink">Email Builder</h1>
+                    <p class="text-sm text-muted mt-1">Build an email once, then start any campaign from it.</p>
+                </div>
+                <a href="{{ route('templates.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-accent text-white text-sm font-bold shadow-soft hover:opacity-90 transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                    New Template
+                </a>
+            </div>
 
             <x-flash-messages />
 
-            @if($templates->isEmpty())
-                <div class="bg-card border border-border shadow-sm rounded-xl">
-                    <x-empty-state
-                        title="No templates yet"
+            @if ($templates->isEmpty())
+                <div class="bg-card border border-border shadow-soft rounded-xl">
+                    <x-empty-state title="No templates yet"
                         description="Build a reusable email once, then start any campaign from it instead of writing content from scratch."
-                        action-label="Create Template"
-                        :action-href="route('templates.create')" />
+                        action-label="Create Template" :action-href="route('templates.create')" />
                 </div>
             @else
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($templates as $template)
-                        <div class="border border-border rounded-xl p-5 bg-card shadow-sm flex flex-col justify-between">
-                            <div>
-                                <h3 class="font-bold text-ink text-lg mb-1">{{ $template->name }}</h3>
-                                <p class="text-xs text-muted mb-3">Default Subject: {{ $template->subject ?? 'None' }}</p>
-                                <div class="text-xs text-muted bg-paper-tint p-3 rounded-md border border-border max-h-32 overflow-hidden mb-4">
-                                    {{ \Illuminate\Support\Str::limit(strip_tags((string) $template->body), 120) }}
+                    @foreach ($templates as $template)
+                        <div class="bg-card border border-border rounded-xl shadow-soft overflow-hidden flex flex-col">
+                            {{-- Thumbnail: the stored email in a sandboxed (script-free) iframe, scaled down. --}}
+                            <a href="{{ route('templates.edit', $template->id) }}" class="relative block h-52 overflow-hidden bg-paper-tint border-b border-border">
+                                <iframe sandbox srcdoc="{{ $template->body }}" tabindex="-1" aria-hidden="true" loading="lazy"
+                                        class="absolute top-0 border-0 bg-white pointer-events-none"
+                                        style="width:640px;height:520px;left:50%;margin-left:-320px;transform:scale(.5);transform-origin:top center;"></iframe>
+                            </a>
+                            <div class="p-5 flex-1 flex flex-col justify-between gap-3">
+                                <div>
+                                    <h3 class="font-extrabold text-ink text-lg truncate">{{ $template->name }}</h3>
+                                    <p class="text-xs text-muted mt-1 truncate">Subject: {{ $template->subject ?? 'None' }}</p>
                                 </div>
-                            </div>
-                            <div class="flex justify-between items-center pt-3 border-t border-border">
-                                <span class="text-xs text-muted">{{ $template->created_at->diffForHumans() }}</span>
-                                <div class="flex items-center space-x-3">
-                                    <a href="{{ route('templates.edit', $template->id) }}" class="text-xs font-semibold text-accent hover:underline">Edit / Preview</a>
-                                    <form method="POST" action="{{ route('templates.destroy', $template->id) }}" onsubmit="return confirm('Delete this template?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-xs font-semibold text-danger hover:underline">Delete</button>
-                                    </form>
+                                <div class="flex justify-between items-center pt-3 border-t border-border">
+                                    <span class="text-xs text-muted">{{ $template->created_at->diffForHumans() }}</span>
+                                    <div class="flex items-center gap-4">
+                                        <a href="{{ route('templates.edit', $template->id) }}" class="text-xs font-bold text-accent hover:underline">Edit</a>
+                                        <form method="POST" action="{{ route('templates.destroy', $template->id) }}" onsubmit="return confirm('Delete this template?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-xs font-bold text-danger hover:underline">Delete</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>

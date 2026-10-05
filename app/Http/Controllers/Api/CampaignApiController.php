@@ -21,7 +21,7 @@ class CampaignApiController extends Controller
             return response()->json(['message' => 'No organization found for this account.'], 404);
         }
 
-        $campaigns = $organization->campaigns()
+        $campaigns = $organization->campaigns()->standalone()
             ->with('sendingIdentity')
             ->withCount('recipients')
             ->orderBy('created_at', 'desc')

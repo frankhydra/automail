@@ -2,26 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light theme (default) */
+/* Light theme: cream paper (palette 2), charcoal ink (palette 1) */
 :root {
-    --ink: #241F1B;
-    --paper: #F7F3EC;
-    --paper-tint: #EFE8D8;
-    --card: #FDFBF7;
-    --muted: #6B6255;
-    --border: #D9D0C1;
+    --ink: #1D1E22;
+    --paper: #FFF3E4;
+    --paper-tint: #F5E2CF;
+    --card: #FFFAF3;
+    --muted: #6A5A4B;
+    --border: #E2D2BC;
 }
 
-/* Dark theme - overrides the same variable names, so every Tailwind utility
-   built from them (bg-card, text-ink, bg-paper, border-border, ...) updates
-   automatically wherever it's used, with no per-page dark: class needed. */
+/* Dark theme: same variable names, so every bg-card / text-ink / border-border flips. */
 .dark {
-    --ink: #F2EDE4;
-    --paper: #211D19;
-    --paper-tint: #2B2621;
-    --card: #2A251F;
-    --muted: #B3A896;
-    --border: #453E35;
+    --ink: #F5E2CF;
+    --paper: #17181B;
+    --paper-tint: #24252A;
+    --card: #1F2024;
+    --muted: #B8A793;
+    --border: #36373D;
 }
 
 body {
@@ -31,11 +29,11 @@ body {
     transition: background-color 150ms ease, color 150ms ease;
 }
 
-/* Text on solid brand-colored backgrounds must stay light in both themes.
-   --paper turns dark in dark mode, so "text-paper" on a navy or red button
-   would otherwise become nearly unreadable there. */
+/* Text on solid brand/danger backgrounds stays light in both themes
+   (--paper turns dark in dark mode). */
 .dark .bg-accent,
-.dark .bg-danger,
-.dark .bg-wax {
+.dark .bg-danger {
     color: #FFFFFF;
 }
+
+[x-cloak] { display: none !important; }

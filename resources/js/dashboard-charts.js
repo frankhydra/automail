@@ -6,13 +6,13 @@ if (dataElement) {
     const data = JSON.parse(dataElement.textContent);
     let charts = [];
 
-    // Brand colors, with lighter variants so the charts stay readable in dark mode.
+    // Brand colors (rust / charcoal / amber), lighter variants in dark mode.
     function palette() {
         const dark = document.documentElement.classList.contains('dark');
 
         return dark
-            ? { accent: '#8F9DC4', success: '#6FAE85', wax: '#D9737D', grid: 'rgba(242, 237, 228, 0.08)', tick: '#B3A896' }
-            : { accent: '#2B3A67', success: '#3F6B4C', wax: '#8C2F39', grid: 'rgba(36, 31, 27, 0.06)', tick: '#6B6255' };
+            ? { accent: '#D98258', second: '#F5E2CF', sun: '#E9A24F', grid: 'rgba(245, 226, 207, 0.08)', tick: '#B8A793' }
+            : { accent: '#B85D33', second: '#1D1E22', sun: '#E9A24F', grid: 'rgba(29, 30, 34, 0.07)', tick: '#6A5A4B' };
     }
 
     // Fades a line's fill from a translucent color at the top to nothing at the bottom.
@@ -104,8 +104,8 @@ if (dataElement) {
                 data: {
                     labels: data.labels,
                     datasets: [
-                        line('Opens', data.opens, colors.success),
-                        line('Clicks', data.clicks, colors.wax),
+                        line('Opens', data.opens, colors.accent),
+                        line('Clicks', data.clicks, colors.sun),
                     ],
                 },
                 options,

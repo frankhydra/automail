@@ -18,6 +18,7 @@ class CampaignRecipient extends Model
         'error_message',
         'sent_at',
         'opened_at',
+        'open_client',
         'clicked_at',
         'provider_message_id',
         'delivered_at',

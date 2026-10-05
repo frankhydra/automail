@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Contact extends Model
 {
@@ -26,6 +27,31 @@ class Contact extends Model
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    /**
+     * Automation triggers listen to contact changes here, so every way a contact can
+     * appear (manual add, CSV import, API) starts journeys without extra wiring.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Contact $contact) {
+            \App\Services\AutomationTrigger::contactCreated($contact);
+        });
+
+        static::updated(function (Contact $contact) {
+            if ($contact->wasChanged('tags')) {
+                \App\Services\AutomationTrigger::tagsChanged($contact, (string) $contact->getOriginal('tags'));
+            }
+        });
+    }
+
+    /**
+     * Every campaign email this contact was queued for (used for engagement stats).
+     */
+    public function campaignRecipients(): HasMany
+    {
+        return $this->hasMany(CampaignRecipient::class);
     }
 
     /**

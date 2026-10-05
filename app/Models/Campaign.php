@@ -16,6 +16,8 @@ class Campaign extends Model
         'sending_identity_id',
         'template_id',
         'segment_id',
+        'automation_id',
+        'automation_node_id',
         'name',
         'subject',
         'body',
@@ -96,5 +98,14 @@ class Campaign extends Model
                 'status' => $failedOnly ? 'failed' : 'sent',
                 'sent_at' => $failedOnly ? null : now(),
             ]);
+    }
+
+    /**
+     * Campaigns a person created and sees in their lists. Excludes the hidden
+     * "system" campaigns that automation email steps send through.
+     */
+    public function scopeStandalone($query)
+    {
+        return $query->where('status', '!=', 'automation');
     }
 }

@@ -26,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Locally: `php artisan schedule:work` keeps this running while you develop.
         // In production this needs a real cron entry running `php artisan schedule:run` every minute.
         $schedule->command('campaigns:process-scheduled')->everyMinute();
+
+        // Moves contacts along their automation journeys (waits, conditions, emails).
+        $schedule->command('automations:process')->everyMinute()->withoutOverlapping();
     })
     ->withMiddleware(function (Middleware $middleware): void {
         // Providers calling our webhooks don't send Laravel's CSRF token - each

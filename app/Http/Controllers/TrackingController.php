@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\CampaignRecipient;
+use App\Models\LinkClick;
+use App\Support\MailClientDetector;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,7 +25,10 @@ class TrackingController extends Controller
     {
         CampaignRecipient::where('id', $recipientId)
             ->whereNull('opened_at')
-            ->update(['opened_at' => now()]);
+            ->update([
+                'opened_at' => now(),
+                'open_client' => MailClientDetector::detect(request()->userAgent()),
+            ]);
 
         $gif = base64_decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
 
@@ -44,6 +49,18 @@ class TrackingController extends Controller
 
         if (!$this->isSafeUrl($url)) {
             abort(404);
+        }
+
+        // One row per click (not just the first) so the Analytics page can rank links.
+        $recipient = CampaignRecipient::find($recipientId);
+
+        if ($recipient) {
+            LinkClick::create([
+                'campaign_id' => $recipient->campaign_id,
+                'campaign_recipient_id' => $recipient->id,
+                'url' => mb_substr($url, 0, 2048),
+                'created_at' => now(),
+            ]);
         }
 
         CampaignRecipient::where('id', $recipientId)

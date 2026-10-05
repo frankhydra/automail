@@ -69,7 +69,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/contacts/import', [ContactImportController::class, 'store'])->name('contacts.import.store');
 
     // Contact Management Routes
-    Route::resource('contacts', ContactController::class)->except(['show', 'create', 'store']);
+    Route::get('/contacts/export', [ContactController::class, 'export'])->name('contacts.export');
+    Route::resource('contacts', ContactController::class)->except(['show', 'create']);
+
+    // Automations (journeys)
+    Route::post('/automations/{id}/activate', [\App\Http\Controllers\AutomationController::class, 'activate'])->name('automations.activate');
+    Route::post('/automations/{id}/pause', [\App\Http\Controllers\AutomationController::class, 'pause'])->name('automations.pause');
+    Route::resource('automations', \App\Http\Controllers\AutomationController::class)->except(['show']);
+
+    // Content Studio (image library)
+    Route::get('/content-studio', [\App\Http\Controllers\AssetController::class, 'index'])->name('assets.index');
+    Route::get('/content-studio/list', [\App\Http\Controllers\AssetController::class, 'list'])->name('assets.list');
+    Route::post('/content-studio', [\App\Http\Controllers\AssetController::class, 'store'])->middleware('throttle:30,1')->name('assets.store');
+    Route::delete('/content-studio/{id}', [\App\Http\Controllers\AssetController::class, 'destroy'])->name('assets.destroy');
+
+    // Per-campaign analytics report
+    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
 
     // Sending Identity Routes
     Route::get('/sending-identities', [SendingIdentityController::class, 'index'])->name('sending-identities.index');
@@ -78,7 +93,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/sending-identities/{id}/check-dns', [SendingIdentityController::class, 'checkDns'])->name('sending-identities.check-dns');
     Route::delete('/sending-identities/{id}', [SendingIdentityController::class, 'destroy'])->name('sending-identities.destroy');
 
-    // Template Routes
+    // Template Routes (preview + send-test are used by the Email Builder; declared before the resource)
+    Route::post('/templates/preview', [TemplateController::class, 'preview'])->name('templates.preview');
+    Route::post('/templates/send-test', [TemplateController::class, 'sendTest'])->middleware('throttle:10,1')->name('templates.send-test');
     Route::resource('templates', TemplateController::class)->except(['show']);
 
     // Segment Routes

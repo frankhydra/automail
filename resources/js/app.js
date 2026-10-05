@@ -16,3 +16,7 @@ Alpine.start();
 if (document.getElementById('dashboard-chart-data')) {
     import('./dashboard-charts');
 }
+
+if (document.getElementById('analytics-chart-data')) {
+    import('./analytics-charts');
+}

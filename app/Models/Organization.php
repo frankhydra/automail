@@ -60,6 +60,22 @@ class Organization extends Model
     }
 
     /**
+     * Marketing automations (journeys).
+     */
+    public function automations(): HasMany
+    {
+        return $this->hasMany(Automation::class);
+    }
+
+    /**
+     * Images uploaded to the Content Studio.
+     */
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class);
+    }
+
+    /**
      * Get all email templates belonging to this organization.
      */
     public function templates(): HasMany

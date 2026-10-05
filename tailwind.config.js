@@ -3,7 +3,7 @@ import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-    darkMode: 'class', // Prevents OS dark mode from overriding the custom warm paper palette
+    darkMode: 'class',
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -16,49 +16,54 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                // These read from CSS custom properties (see resources/css/app.css),
-                // which flip value inside ".dark" - so any page using bg-card,
-                // text-ink, bg-paper, border-border, etc. gets dark mode
-                // automatically, with no separate dark: class needed per page.
+                // Theme-aware colors: values live in resources/css/app.css and flip in ".dark".
                 ink: 'var(--ink)',
                 paper: 'var(--paper)',
                 'paper-tint': 'var(--paper-tint)',
                 card: 'var(--card)',
                 muted: 'var(--muted)',
                 border: 'var(--border)',
-                // Accent/wax stay the same in both themes - a brand color that
-                // doesn't need to invert.
-                accent: '#2B3A67',
-                wax: '#8C2F39',
-                // Status/feedback colors: plain static hex (not CSS variables) so
-                // Tailwind's opacity modifiers (bg-success/20, text-danger/70, etc.)
-                // work - a CSS-variable color can't be alpha-blended at build time.
-                // Chosen to sit alongside the warm palette rather than clash with
-                // stock Tailwind red/green/amber.
+
+                // Brand: rust is the main accent. "wax" is kept as a name because older
+                // views use it for small dots/underlines; it is now the warm amber.
+                accent: '#B85D33',
+                wax: '#E9A24F',
+                sun: '#E9A24F',
+                'sun-tint': '#F6D2A1',
+
+                // Sidebar is charcoal in BOTH light and dark mode.
+                sidebar: '#1D1E22',
+                'sidebar-hover': '#2A2B31',
+                'sidebar-line': '#34353B',
+                'sidebar-text': '#D8C7B3',
+
+                // Status colors (static hex so opacity modifiers like bg-success/20 work).
                 success: '#3F6B4C',
-                'success-tint': '#E6EDE7',
-                warning: '#B8863B',
-                'warning-tint': '#F5ECDD',
-                danger: '#8C2F39',
-                'danger-tint': '#F3E4E3',
-                info: '#2B3A67',
-                'info-tint': '#E7EAF1',
-                // Older pages still use Tailwind's stock "indigo" classes (bright
-                // purple-blue buttons and links). Pointing indigo at the brand navy
-                // retints all of them at once, so they match the rest of the app
-                // until each page is redesigned properly.
+                'success-tint': '#E4EEE4',
+                warning: '#B8791F',
+                'warning-tint': '#FBEBCF',
+                danger: '#A63A2E',
+                'danger-tint': '#F6E0DB',
+                info: '#7E6A5E',
+                'info-tint': '#EFE3D4',
+
+                // Older pages still use Tailwind's "indigo" classes. Pointing indigo at the
+                // rust ramp re-colors all of them until each page is redesigned.
                 indigo: {
-                    50: '#EEF0F6',
-                    100: '#DDE1EE',
-                    200: '#BAC3DC',
-                    300: '#8F9DC4',
-                    400: '#5F72A6',
-                    500: '#3F5088',
-                    600: '#2B3A67',
-                    700: '#222F55',
-                    800: '#1A2442',
-                    900: '#121A30',
+                    50: '#FBF1EB',
+                    100: '#F5DFD2',
+                    200: '#EBC0A8',
+                    300: '#DE9A76',
+                    400: '#CF7A4E',
+                    500: '#C46A3E',
+                    600: '#B85D33',
+                    700: '#984B28',
+                    800: '#78391E',
+                    900: '#552814',
                 },
+            },
+            boxShadow: {
+                soft: '0 1px 2px rgba(29,30,34,0.04), 0 4px 16px rgba(29,30,34,0.05)',
             },
         },
     },

@@ -14,6 +14,7 @@ class Template extends Model
         'organization_id',
         'name',
         'subject',
+        'preview_text',
         'body',
         'blocks',
     ];
