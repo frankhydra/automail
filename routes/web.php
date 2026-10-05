@@ -84,6 +84,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/content-studio/{id}', [\App\Http\Controllers\AssetController::class, 'destroy'])->name('assets.destroy');
 
     // Per-campaign analytics report
+    // Colour themes (personal preference, any signed-in member)
+    Route::get('/themes', [\App\Http\Controllers\ThemeController::class, 'index'])->name('themes.index');
+    Route::put('/themes', [\App\Http\Controllers\ThemeController::class, 'update'])->middleware('throttle:30,1')->name('themes.update');
+
     Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
 
     // Sending Identity Routes

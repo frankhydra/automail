@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @auth data-palette="{{ \App\Support\Theme::current(Auth::user()) }}" @endauth>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,6 +19,8 @@
         </script>
 
         <!-- Scripts -->
+        @include('layouts._palette')
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-ink antialiased">

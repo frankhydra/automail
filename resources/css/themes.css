@@ -1,0 +1,299 @@
+/*
+ * AutoMail colour themes.
+ *
+ * HOW IT WORKS
+ *  - Pages use Tailwind tokens (bg-accent, bg-card, text-ink, bg-sidebar ...).
+ *    tailwind.config.js maps every token to a CSS variable.
+ *  - This file gives those variables a value per theme. The active theme is the
+ *    data-palette attribute on <html> (set by layouts/app.blade.php).
+ *  - Dark mode is separate: it is the .dark class on <html>. Every theme defines
+ *    both a light and a dark set of neutrals.
+ *  - "ember" is the default and equals the original AutoMail look: its values live
+ *    in :root below and in app.css (:root / .dark), so no ember block is needed.
+ *
+ * TO ADD A THEME: add a block pair here, add its entry to config/themes.php.
+ * Brand colours are stored as "R G B" channels so Tailwind opacity classes such as
+ * bg-accent/20 keep working.
+ */
+
+/* Default (ember) brand values */
+:root {
+    --accent: 184 93 51;
+    --accent-50: 251 241 235;
+    --accent-100: 245 223 210;
+    --accent-200: 235 192 168;
+    --accent-300: 222 154 118;
+    --accent-400: 207 122 78;
+    --accent-500: 196 106 62;
+    --accent-600: 184 93 51;
+    --accent-700: 152 75 40;
+    --accent-800: 120 57 30;
+    --accent-900: 85 40 20;
+    --sun: 233 162 79;
+    --wax: 233 162 79;
+    --sun-tint: 246 210 161;
+    --sidebar: 29 30 34;
+    --sidebar-hover: 42 43 49;
+    --sidebar-line: 52 53 59;
+    --sidebar-text: 216 199 179;
+}
+
+/* Ocean */
+html[data-palette="ocean"] {
+    --ink: #0F1F2E;
+    --paper: #EEF5FA;
+    --paper-tint: #DCEAF4;
+    --card: #F8FBFD;
+    --muted: #4F6578;
+    --border: #C9DBE9;
+    --accent: 27 108 168;
+    --accent-50: 237 243 248;
+    --accent-100: 214 229 239;
+    --accent-200: 177 205 225;
+    --accent-300: 132 176 208;
+    --accent-400: 91 149 192;
+    --accent-500: 54 126 178;
+    --accent-600: 27 108 168;
+    --accent-700: 22 89 138;
+    --accent-800: 17 69 108;
+    --accent-900: 13 52 81;
+    --sun: 242 181 68;
+    --wax: 242 181 68;
+    --sun-tint: 248 220 164;
+    --sidebar: 15 31 46;
+    --sidebar-hover: 23 44 65;
+    --sidebar-line: 34 58 82;
+    --sidebar-text: 191 211 230;
+}
+
+html[data-palette="ocean"].dark {
+    --ink: #DCEAF4;
+    --paper: #0B1620;
+    --paper-tint: #132434;
+    --card: #101E2B;
+    --muted: #94AEC4;
+    --border: #223A52;
+}
+
+/* Forest */
+html[data-palette="forest"] {
+    --ink: #14231B;
+    --paper: #F1F6EE;
+    --paper-tint: #E1ECDB;
+    --card: #FAFDF8;
+    --muted: #54675A;
+    --border: #CCDCC6;
+    --accent: 47 122 79;
+    --accent-50: 238 244 241;
+    --accent-100: 218 231 223;
+    --accent-200: 184 210 195;
+    --accent-300: 143 183 160;
+    --accent-400: 105 159 128;
+    --accent-500: 72 138 100;
+    --accent-600: 47 122 79;
+    --accent-700: 39 100 65;
+    --accent-800: 30 78 51;
+    --accent-900: 23 59 38;
+    --sun: 227 179 65;
+    --wax: 227 179 65;
+    --sun-tint: 242 219 159;
+    --sidebar: 20 35 27;
+    --sidebar-hover: 29 51 39;
+    --sidebar-line: 41 68 58;
+    --sidebar-text: 199 220 203;
+}
+
+html[data-palette="forest"].dark {
+    --ink: #E1ECDB;
+    --paper: #0E1712;
+    --paper-tint: #17241C;
+    --card: #121D16;
+    --muted: #9DB5A3;
+    --border: #2A4132;
+}
+
+/* Plum */
+html[data-palette="plum"] {
+    --ink: #20132A;
+    --paper: #F8F1FB;
+    --paper-tint: #EEDFF4;
+    --card: #FDF9FE;
+    --muted: #6B5578;
+    --border: #DEC9E8;
+    --accent: 138 63 160;
+    --accent-50: 246 240 247;
+    --accent-100: 234 220 238;
+    --accent-200: 215 190 223;
+    --accent-300: 192 151 204;
+    --accent-400: 171 117 187;
+    --accent-500: 152 86 171;
+    --accent-600: 138 63 160;
+    --accent-700: 113 52 131;
+    --accent-800: 88 40 102;
+    --accent-900: 66 30 77;
+    --sun: 242 179 107;
+    --wax: 242 179 107;
+    --sun-tint: 248 217 178;
+    --sidebar: 32 19 42;
+    --sidebar-hover: 45 29 58;
+    --sidebar-line: 63 42 80;
+    --sidebar-text: 217 196 230;
+}
+
+html[data-palette="plum"].dark {
+    --ink: #EEDFF4;
+    --paper: #150D1C;
+    --paper-tint: #20142A;
+    --card: #1A1124;
+    --muted: #B49ACA;
+    --border: #3F2A50;
+}
+
+/* Slate */
+html[data-palette="slate"] {
+    --ink: #111827;
+    --paper: #F3F4F6;
+    --paper-tint: #E5E7EB;
+    --card: #FFFFFF;
+    --muted: #6B7280;
+    --border: #D1D5DB;
+    --accent: 71 85 105;
+    --accent-50: 240 241 243;
+    --accent-100: 222 224 228;
+    --accent-200: 192 197 204;
+    --accent-300: 156 163 174;
+    --accent-400: 123 133 147;
+    --accent-500: 93 105 123;
+    --accent-600: 71 85 105;
+    --accent-700: 58 70 86;
+    --accent-800: 45 54 67;
+    --accent-900: 34 41 50;
+    --sun: 245 158 11;
+    --wax: 245 158 11;
+    --sun-tint: 250 213 139;
+    --sidebar: 17 24 39;
+    --sidebar-hover: 31 41 55;
+    --sidebar-line: 55 65 81;
+    --sidebar-text: 203 213 225;
+}
+
+html[data-palette="slate"].dark {
+    --ink: #E5E7EB;
+    --paper: #0B0F16;
+    --paper-tint: #161C26;
+    --card: #111722;
+    --muted: #9CA3AF;
+    --border: #2B3340;
+}
+
+/* Lagoon */
+html[data-palette="lagoon"] {
+    --ink: #032B3F;
+    --paper: #EEF6FA;
+    --paper-tint: #D9EBF4;
+    --card: #F8FCFE;
+    --muted: #4C6678;
+    --border: #C5DDEA;
+    --accent: 28 126 155;
+    --accent-50: 237 245 247;
+    --accent-100: 214 232 237;
+    --accent-200: 178 211 221;
+    --accent-300: 132 185 201;
+    --accent-400: 92 162 183;
+    --accent-500: 55 141 167;
+    --accent-600: 28 126 155;
+    --accent-700: 23 103 127;
+    --accent-800: 18 81 99;
+    --accent-900: 13 60 74;
+    --sun: 255 170 0;
+    --wax: 255 170 0;
+    --sun-tint: 255 212 122;
+    --sidebar: 3 43 63;
+    --sidebar-hover: 11 58 82;
+    --sidebar-line: 23 80 107;
+    --sidebar-text: 185 220 236;
+}
+
+html[data-palette="lagoon"].dark {
+    --ink: #D9EBF4;
+    --paper: #06161F;
+    --paper-tint: #0E2533;
+    --card: #0A1D2A;
+    --muted: #8FB0C4;
+    --border: #1D3C50;
+}
+
+/* Dahlia */
+html[data-palette="dahlia"] {
+    --ink: #413F3D;
+    --paper: #F2F1EF;
+    --paper-tint: #E6E1E1;
+    --card: #FAF9F8;
+    --muted: #6B6567;
+    --border: #D8CFD0;
+    --accent: 105 113 132;
+    --accent-50: 243 244 245;
+    --accent-100: 228 229 233;
+    --accent-200: 204 207 213;
+    --accent-300: 174 178 189;
+    --accent-400: 147 153 166;
+    --accent-500: 123 130 147;
+    --accent-600: 105 113 132;
+    --accent-700: 86 93 108;
+    --accent-800: 67 72 84;
+    --accent-900: 50 54 63;
+    --sun: 102 186 200;
+    --wax: 102 186 200;
+    --sun-tint: 191 227 233;
+    --sidebar: 65 63 61;
+    --sidebar-hover: 78 76 74;
+    --sidebar-line: 92 90 88;
+    --sidebar-text: 216 207 208;
+}
+
+html[data-palette="dahlia"].dark {
+    --ink: #E6E1E1;
+    --paper: #1B1A1A;
+    --paper-tint: #262425;
+    --card: #211F20;
+    --muted: #B1A6A4;
+    --border: #3A3738;
+}
+
+/* Sage */
+html[data-palette="sage"] {
+    --ink: #1E1E1E;
+    --paper: #F7F5EE;
+    --paper-tint: #E4EEE2;
+    --card: #FDFCF8;
+    --muted: #5F665F;
+    --border: #D9DCC9;
+    --accent: 74 127 105;
+    --accent-50: 241 245 243;
+    --accent-100: 222 232 228;
+    --accent-200: 193 211 204;
+    --accent-300: 157 186 174;
+    --accent-400: 125 163 147;
+    --accent-500: 96 142 123;
+    --accent-600: 74 127 105;
+    --accent-700: 61 104 86;
+    --accent-800: 47 81 67;
+    --accent-900: 36 61 50;
+    --sun: 232 218 112;
+    --wax: 232 218 112;
+    --sun-tint: 244 235 168;
+    --sidebar: 30 30 30;
+    --sidebar-hover: 43 43 43;
+    --sidebar-line: 59 59 59;
+    --sidebar-text: 214 230 219;
+}
+
+html[data-palette="sage"].dark {
+    --ink: #E4EEE2;
+    --paper: #111513;
+    --paper-tint: #1B221E;
+    --card: #161B18;
+    --muted: #A3B8AB;
+    --border: #2B3630;
+}
+

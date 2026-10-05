@@ -1,4 +1,5 @@
 import Chart from 'chart.js/auto';
+import { themeColors } from './theme-colors';
 
 const dataElement = document.getElementById('dashboard-chart-data');
 
@@ -8,11 +9,9 @@ if (dataElement) {
 
     // Brand colors (rust / charcoal / amber), lighter variants in dark mode.
     function palette() {
-        const dark = document.documentElement.classList.contains('dark');
+        const t = themeColors();
 
-        return dark
-            ? { accent: '#D98258', second: '#F5E2CF', sun: '#E9A24F', grid: 'rgba(245, 226, 207, 0.08)', tick: '#B8A793' }
-            : { accent: '#B85D33', second: '#1D1E22', sun: '#E9A24F', grid: 'rgba(29, 30, 34, 0.07)', tick: '#6A5A4B' };
+        return { accent: t.accent, second: t.ink, sun: t.sun, grid: t.grid, tick: t.muted };
     }
 
     // Fades a line's fill from a translucent color at the top to nothing at the bottom.

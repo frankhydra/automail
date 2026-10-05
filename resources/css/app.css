@@ -1,3 +1,6 @@
+/* Colour themes (palette variables). Must stay first. */
+@import './themes.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

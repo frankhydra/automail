@@ -24,18 +24,20 @@ export default {
                 muted: 'var(--muted)',
                 border: 'var(--border)',
 
+                // Brand colours come from CSS variables so the Themes feature can swap them
+                // (values: resources/css/themes.css). Default theme = rust.
                 // Brand: rust is the main accent. "wax" is kept as a name because older
                 // views use it for small dots/underlines; it is now the warm amber.
-                accent: '#B85D33',
-                wax: '#E9A24F',
-                sun: '#E9A24F',
-                'sun-tint': '#F6D2A1',
+                accent: 'rgb(var(--accent) / <alpha-value>)',
+                wax: 'rgb(var(--wax) / <alpha-value>)',
+                sun: 'rgb(var(--sun) / <alpha-value>)',
+                'sun-tint': 'rgb(var(--sun-tint) / <alpha-value>)',
 
                 // Sidebar is charcoal in BOTH light and dark mode.
-                sidebar: '#1D1E22',
-                'sidebar-hover': '#2A2B31',
-                'sidebar-line': '#34353B',
-                'sidebar-text': '#D8C7B3',
+                sidebar: 'rgb(var(--sidebar) / <alpha-value>)',
+                'sidebar-hover': 'rgb(var(--sidebar-hover) / <alpha-value>)',
+                'sidebar-line': 'rgb(var(--sidebar-line) / <alpha-value>)',
+                'sidebar-text': 'rgb(var(--sidebar-text) / <alpha-value>)',
 
                 // Status colors (static hex so opacity modifiers like bg-success/20 work).
                 success: '#3F6B4C',
@@ -50,16 +52,16 @@ export default {
                 // Older pages still use Tailwind's "indigo" classes. Pointing indigo at the
                 // rust ramp re-colors all of them until each page is redesigned.
                 indigo: {
-                    50: '#FBF1EB',
-                    100: '#F5DFD2',
-                    200: '#EBC0A8',
-                    300: '#DE9A76',
-                    400: '#CF7A4E',
-                    500: '#C46A3E',
-                    600: '#B85D33',
-                    700: '#984B28',
-                    800: '#78391E',
-                    900: '#552814',
+                    50: 'rgb(var(--accent-50) / <alpha-value>)',
+                    100: 'rgb(var(--accent-100) / <alpha-value>)',
+                    200: 'rgb(var(--accent-200) / <alpha-value>)',
+                    300: 'rgb(var(--accent-300) / <alpha-value>)',
+                    400: 'rgb(var(--accent-400) / <alpha-value>)',
+                    500: 'rgb(var(--accent-500) / <alpha-value>)',
+                    600: 'rgb(var(--accent-600) / <alpha-value>)',
+                    700: 'rgb(var(--accent-700) / <alpha-value>)',
+                    800: 'rgb(var(--accent-800) / <alpha-value>)',
+                    900: 'rgb(var(--accent-900) / <alpha-value>)',
                 },
             },
             boxShadow: {

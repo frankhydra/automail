@@ -1,4 +1,5 @@
 import Chart from 'chart.js/auto';
+import { themeColors } from './theme-colors';
 
 const dataElement = document.getElementById('analytics-chart-data');
 const canvas = document.getElementById('hourlyChart');
@@ -8,11 +9,9 @@ if (dataElement && canvas) {
     let chart = null;
 
     function palette() {
-        const dark = document.documentElement.classList.contains('dark');
+        const t = themeColors();
 
-        return dark
-            ? { opens: '#D98258', clicks: '#F5E2CF', grid: 'rgba(245, 226, 207, 0.08)', tick: '#B8A793' }
-            : { opens: '#B85D33', clicks: '#1D1E22', grid: 'rgba(29, 30, 34, 0.07)', tick: '#6A5A4B' };
+        return { opens: t.accent, clicks: t.ink, grid: t.grid, tick: t.muted };
     }
 
     function draw() {
