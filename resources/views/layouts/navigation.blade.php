@@ -67,7 +67,7 @@
         <x-sidebar-link :href="route('automations.index')" :active="request()->routeIs('automations.*')">{!! $ico('automations') !!}<span>Automations</span></x-sidebar-link>
         <x-sidebar-link :href="route('analytics.index')" :active="request()->routeIs('analytics.*')">{!! $ico('analytics') !!}<span>Analytics</span></x-sidebar-link>
         <x-sidebar-link :href="route('assets.index')" :active="request()->routeIs('assets.*')">{!! $ico('studio') !!}<span>Content Studio</span></x-sidebar-link>
-        <x-sidebar-link :disabled="true">{!! $ico('integrations') !!}<span>Integrations</span></x-sidebar-link>
+        <x-sidebar-link :href="route('integrations.index')" :active="request()->routeIs('integrations.*')">{!! $ico('integrations') !!}<span>Integrations</span></x-sidebar-link>
 
         <div class="pt-4 pb-1 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sidebar-text/40">Manage</div>
 

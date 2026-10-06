@@ -29,6 +29,11 @@ Route::get('/', function () {
 Route::post('/webhooks/brevo/{token}', [WebhookController::class, 'brevo'])->name('webhooks.brevo');
 Route::post('/webhooks/resend', [WebhookController::class, 'resend'])->name('webhooks.resend');
 
+// Lets other tools (website forms, Zapier, Make...) add contacts. The secret token is in the URL.
+Route::post('/webhooks/contacts/{token}', [\App\Http\Controllers\ContactIntakeController::class, 'store'])
+    ->middleware('throttle:60,1')
+    ->name('webhooks.contacts');
+
 // Public, signed unsubscribe links (one link = one recipient). GET only shows a confirmation page.
 Route::middleware(['signed', 'throttle:30,1'])->group(function () {
     Route::get('/unsubscribe/{recipient}', [UnsubscribeController::class, 'show'])->name('unsubscribe.show');
@@ -71,6 +76,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Contact Management Routes
     Route::get('/contacts/export', [ContactController::class, 'export'])->name('contacts.export');
     Route::resource('contacts', ContactController::class)->except(['show', 'create']);
+
+    // Integrations
+    Route::get('/integrations', [\App\Http\Controllers\IntegrationController::class, 'index'])->name('integrations.index');
+    Route::post('/integrations/webhook/generate', [\App\Http\Controllers\IntegrationController::class, 'generateWebhook'])->name('integrations.webhook.generate');
+    Route::put('/integrations/webhook', [\App\Http\Controllers\IntegrationController::class, 'updateWebhook'])->name('integrations.webhook.update');
+    Route::put('/integrations/utm', [\App\Http\Controllers\IntegrationController::class, 'updateUtm'])->name('integrations.utm.update');
 
     // Automations (journeys)
     Route::post('/automations/{id}/activate', [\App\Http\Controllers\AutomationController::class, 'activate'])->name('automations.activate');
