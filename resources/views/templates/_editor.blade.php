@@ -45,6 +45,10 @@
         'sendTestUrl' => route('templates.send-test'),
         'assetsListUrl' => route('assets.list'),
         'assetsStoreUrl' => route('assets.store'),
+        'aiStatusUrl' => route('ai.status'),
+        'aiDraftUrl' => route('ai.draft'),
+        'aiRewriteUrl' => route('ai.rewrite'),
+        'aiSubjectsUrl' => route('ai.subjects'),
     ];
 
     $palette = [
@@ -123,9 +127,10 @@
 
         <!-- LEFT: blocks / envelope -->
         <aside class="lg:w-72 shrink-0 bg-card border-b lg:border-b-0 lg:border-r border-border overflow-y-auto">
-            <div class="grid grid-cols-2 p-3 gap-2 border-b border-border">
+            <div class="grid grid-cols-3 p-3 gap-2 border-b border-border">
                 <button type="button" @click="tab = 'blocks'" :class="tab === 'blocks' ? 'bg-accent text-white' : 'bg-paper-tint text-muted hover:text-ink'" class="py-2 rounded-lg text-sm font-bold">Blocks</button>
                 <button type="button" @click="tab = 'envelope'" :class="tab === 'envelope' ? 'bg-accent text-white' : 'bg-paper-tint text-muted hover:text-ink'" class="py-2 rounded-lg text-sm font-bold">Envelope</button>
+                <button type="button" @click="tab = 'ai'" :class="tab === 'ai' ? 'bg-accent text-white' : 'bg-paper-tint text-muted hover:text-ink'" class="py-2 rounded-lg text-sm font-bold">&#10024; AI</button>
             </div>
 
             <!-- Blocks tab -->
@@ -165,6 +170,18 @@
                     <input id="subject" type="text" name="subject" x-model="subject" maxlength="255" @focusin="lastField = $event.target"
                            placeholder="e.g. Big news from our team" class="{{ $input }}">
                     <div class="text-[11px] text-muted mt-1"><span x-text="subject.length"></span> characters &middot; under 60 reads best on phones</div>
+
+                    <div x-show="aiAvailable" x-cloak class="mt-2">
+                        <button type="button" @click="suggestSubjects()" :disabled="aiBusy === 'subjects'" class="text-xs font-bold text-accent hover:underline disabled:opacity-50">
+                            <span x-text="aiBusy === 'subjects' ? 'Thinking...' : '&#10024; Suggest subject lines'"></span>
+                        </button>
+                        <div x-show="subjectIdeas.length" x-cloak class="mt-2 space-y-1.5">
+                            <template x-for="idea in subjectIdeas" :key="idea">
+                                <button type="button" @click="subject = idea; dirty = true" class="block w-full text-left text-xs px-3 py-2 rounded-lg border border-border bg-paper text-ink hover:border-accent" x-text="idea"></button>
+                            </template>
+                        </div>
+                        <p x-show="aiErr && aiBusy === ''" x-cloak class="text-[11px] text-danger mt-1" x-text="aiErr"></p>
+                    </div>
                 </div>
 
                 <div>
@@ -178,6 +195,64 @@
                     <div class="{{ $label }}">From</div>
                     <div class="text-sm text-ink bg-paper-tint border border-border rounded-lg px-3 py-2 break-words" x-text="senderLabel"></div>
                     <p class="text-[11px] text-muted mt-1">The sender and reply-to come from the Sending Identity you choose when you create a campaign.</p>
+                </div>
+            </div>
+
+            <!-- AI tab -->
+            <div x-show="tab === 'ai'" x-cloak class="p-4 space-y-5">
+                <div x-show="!aiLoaded" class="text-sm text-muted">Checking the AI assistant...</div>
+
+                <div x-show="aiLoaded && !aiAvailable" x-cloak class="text-sm text-ink bg-paper-tint border border-border rounded-lg p-3">
+                    The AI assistant is switched off. To turn it on, an admin adds <code>ANTHROPIC_API_KEY</code> to the server's <code>.env</code> file.
+                </div>
+
+                <div x-show="aiAvailable" x-cloak class="space-y-4">
+                    <div class="text-[11px] text-muted"><span class="font-bold text-ink" x-text="aiRemaining"></span> AI requests left this month</div>
+
+                    <div>
+                        <label class="{{ $label }}" for="ai-brief">Describe the email you want</label>
+                        <textarea id="ai-brief" x-model="brief" rows="4" maxlength="1000" placeholder="e.g. 30% off all headphones this weekend, for existing customers" class="{{ $input }}"></textarea>
+                        <div class="text-[11px] text-muted mt-1">Tip: include the offer, who it is for and any dates. The AI won't invent prices or deadlines.</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="{{ $label }}" for="ai-tone">Tone</label>
+                            <select id="ai-tone" x-model="tone" class="{{ $input }}">
+                                <option value="friendly">Friendly</option>
+                                <option value="professional">Professional</option>
+                                <option value="persuasive">Persuasive</option>
+                                <option value="playful">Playful</option>
+                                <option value="warm">Warm</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="{{ $label }}" for="ai-lang">Language</label>
+                            <input id="ai-lang" type="text" x-model="aiLang" maxlength="40" placeholder="same as brief" class="{{ $input }}">
+                        </div>
+                    </div>
+
+                    <button type="button" @click="writeDraft()" :disabled="aiBusy !== '' || brief.trim().length < 5" class="w-full py-2.5 rounded-lg bg-accent text-white text-sm font-bold hover:opacity-90 disabled:opacity-50">
+                        <span x-text="aiBusy === 'draft' ? 'Writing...' : 'Write draft'"></span>
+                    </button>
+
+                    <p x-show="aiErr && aiBusy === ''" x-cloak class="p-3 rounded-lg bg-danger-tint border border-danger/30 text-xs text-danger" x-text="aiErr"></p>
+
+                    <!-- Result -->
+                    <div x-show="draft" x-cloak class="border border-border rounded-xl bg-paper p-4 space-y-3">
+                        <div class="text-xs font-bold uppercase tracking-wider text-muted">Draft</div>
+                        <div><div class="text-[11px] text-muted">Subject</div><div class="text-sm font-semibold text-ink" x-text="draft && draft.subject"></div></div>
+                        <div><div class="text-[11px] text-muted">Preview text</div><div class="text-sm text-ink" x-text="draft && draft.preview_text"></div></div>
+                        <div><div class="text-[11px] text-muted">Headline</div><div class="text-sm font-semibold text-ink" x-text="draft && draft.headline"></div></div>
+                        <div><div class="text-[11px] text-muted">Body</div><div class="text-sm text-ink whitespace-pre-line" x-text="draft && draft.body"></div></div>
+                        <div><div class="text-[11px] text-muted">Button</div><div class="text-sm font-semibold text-ink" x-text="draft && draft.button_label"></div></div>
+
+                        <div class="flex flex-col gap-2 pt-1">
+                            <button type="button" @click="insertDraft()" class="w-full py-2 rounded-lg bg-sidebar text-white text-sm font-bold hover:bg-black">Insert into my email</button>
+                            <button type="button" @click="draft = null" class="w-full py-2 rounded-lg border border-border text-sm font-semibold text-muted hover:text-ink">Discard</button>
+                        </div>
+                        <p class="text-[11px] text-muted">Always read AI writing before you send it. It adds a headline, text and button to the end of your email, and fills the subject and preview text if they are empty.</p>
+                    </div>
                 </div>
             </div>
         </aside>
@@ -339,6 +414,30 @@
                     <p class="text-sm text-muted">A plain horizontal line. Nothing to set.</p>
                 </template>
 
+                <template x-if="aiAvailable && current && rewriteKey(current)">
+                    <div class="mt-6 pt-4 border-t border-border space-y-2">
+                        <div class="{{ $label }}">&#10024; Improve with AI</div>
+                        <select x-model="rewriteAction" class="{{ $input }}">
+                            <option value="shorter">Make shorter</option>
+                            <option value="professional">More professional</option>
+                            <option value="friendly">More friendly</option>
+                            <option value="persuasive">More persuasive</option>
+                            <option value="improve_cta">Improve as call to action</option>
+                            <option value="fix_grammar">Fix spelling and grammar</option>
+                            <option value="translate">Translate</option>
+                        </select>
+                        <input x-show="rewriteAction === 'translate'" x-cloak type="text" x-model="rewriteLang" maxlength="40" placeholder="Language, e.g. French" class="{{ $input }}">
+                        <div class="flex gap-2">
+                            <button type="button" @click="rewriteCurrent()" :disabled="aiBusy !== ''" class="flex-1 py-2 rounded-lg bg-accent text-white text-xs font-bold hover:opacity-90 disabled:opacity-50">
+                                <span x-text="aiBusy === 'rewrite' ? 'Working...' : 'Apply'"></span>
+                            </button>
+                            <button type="button" x-show="undo && undo.block === current" x-cloak @click="undoRewrite()" class="px-3 py-2 rounded-lg border border-border text-xs font-bold text-ink hover:border-accent">Undo</button>
+                        </div>
+                        <p x-show="aiErr && aiBusy === ''" x-cloak class="text-[11px] text-danger" x-text="aiErr"></p>
+                        <p class="text-[11px] text-muted"><span x-text="aiRemaining"></span> AI requests left this month</p>
+                    </div>
+                </template>
+
                 <div x-show="current" class="mt-6 pt-4 border-t border-border flex gap-2">
                     <button type="button" @click="move(selected, -1)" :disabled="selected === 0" class="flex-1 py-2 rounded-lg border border-border text-xs font-bold text-ink hover:border-accent disabled:opacity-40">&uarr; Up</button>
                     <button type="button" @click="move(selected, 1)" :disabled="selected === blocks.length - 1" class="flex-1 py-2 rounded-lg border border-border text-xs font-bold text-ink hover:border-accent disabled:opacity-40">&darr; Down</button>
@@ -474,10 +573,14 @@
 
                 testOpen: false, testEmail: cfg.userEmail, testBusy: false, testMsg: '', testErr: '',
                 pickerOpen: false, pickerBusy: false, pickerErr: '', assets: [],
+                aiLoaded: false, aiAvailable: false, aiRemaining: 0, aiBusy: '', aiErr: '',
+                brief: '', tone: 'friendly', aiLang: '', draft: null, subjectIdeas: [],
+                rewriteAction: 'shorter', rewriteLang: '', undo: null,
                 previewOpen: false, previewBusy: false, previewHtml: '', previewSubject: '', previewErr: '', previewDevice: 'desktop',
 
                 init: function () {
                     var self = this;
+                    this.loadAiStatus();
                     this.$watch(function () {
                         return JSON.stringify([self.blocks, self.name, self.subject, self.previewText, self.htmlBody, self.mode]);
                     }, function () { self.dirty = true; });
@@ -575,6 +678,96 @@
                         this.previewErr = e.message;
                     }
                     this.previewBusy = false;
+                },
+
+                // ---- AI assistant -------------------------------------------------------
+
+                loadAiStatus: async function () {
+                    try {
+                        var res = await fetch(cfg.aiStatusUrl, { headers: { 'Accept': 'application/json' } });
+                        var json = await res.json();
+                        this.aiAvailable = !!json.available;
+                        this.aiRemaining = json.remaining || 0;
+                    } catch (e) {
+                        this.aiAvailable = false;
+                    }
+                    this.aiLoaded = true;
+                },
+
+                // Runs one AI call: tracks "busy", shows errors, keeps the allowance counter fresh.
+                aiCall: async function (kind, url, data) {
+                    this.aiBusy = kind;
+                    this.aiErr = '';
+                    try {
+                        var json = await this.post(url, data);
+                        if (typeof json.remaining === 'number') { this.aiRemaining = json.remaining; }
+                        this.aiBusy = '';
+                        return json;
+                    } catch (e) {
+                        this.aiErr = e.message;
+                        this.aiBusy = '';
+                        return null;
+                    }
+                },
+
+                writeDraft: async function () {
+                    this.draft = null;
+                    var json = await this.aiCall('draft', cfg.aiDraftUrl, { brief: this.brief, tone: this.tone, language: this.aiLang || null });
+                    if (json) { this.draft = json; }
+                },
+
+                insertDraft: function () {
+                    var d = this.draft;
+                    if (!d) { return; }
+                    if (this.mode !== 'builder') {
+                        this.aiErr = 'Switch to Visual mode (top bar) to insert the draft.';
+                        return;
+                    }
+                    if (!this.subject) { this.subject = d.subject; }
+                    if (!this.previewText) { this.previewText = d.preview_text; }
+                    if (d.headline) { this.blocks.push({ type: 'header', title: d.headline, subtitle: '', align: 'center' }); }
+                    this.blocks.push({ type: 'text', content: d.body, font_size: 'medium', align: 'left' });
+                    if (d.button_label) { this.blocks.push({ type: 'button', label: d.button_label, url: 'https://', color: '#B85D33', align: 'center' }); }
+                    this.draft = null;
+                    this.tab = 'blocks';
+                    this.selected = this.blocks.length - 1;
+                },
+
+                // The email's text, used as context for subject-line ideas.
+                emailText: function () {
+                    if (this.mode === 'html') { return (this.htmlBody || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 2500); }
+                    return this.blocks.map(function (b) {
+                        return [b.title, b.subtitle, b.content, b.left, b.right, b.label].filter(Boolean).join(' ');
+                    }).join('\n').trim().slice(0, 2500);
+                },
+
+                suggestSubjects: async function () {
+                    var context = this.emailText();
+                    if (context.length < 5) { this.aiErr = 'Write some of your email first, then ask for subject lines.'; return; }
+                    var json = await this.aiCall('subjects', cfg.aiSubjectsUrl, { context: context, current: this.subject || null });
+                    if (json) { this.subjectIdeas = json.subjects; }
+                },
+
+                // Which field of the selected block the "Improve with AI" box edits.
+                rewriteKey: function (block) {
+                    return { text: 'content', header: 'title', button: 'label' }[block.type] || null;
+                },
+
+                rewriteCurrent: async function () {
+                    var block = this.current;
+                    var key = block ? this.rewriteKey(block) : null;
+                    if (!key || !block[key]) { this.aiErr = 'There is no text in this block yet.'; return; }
+                    var json = await this.aiCall('rewrite', cfg.aiRewriteUrl, { text: block[key], action: this.rewriteAction, language: this.rewriteLang || null });
+                    if (json) {
+                        this.undo = { block: block, key: key, value: block[key] };
+                        block[key] = json.text;
+                    }
+                },
+
+                undoRewrite: function () {
+                    if (!this.undo) { return; }
+                    this.undo.block[this.undo.key] = this.undo.value;
+                    this.undo = null;
                 },
 
                 openPicker: async function () {

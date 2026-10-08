@@ -77,6 +77,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/contacts/export', [ContactController::class, 'export'])->name('contacts.export');
     Route::resource('contacts', ContactController::class)->except(['show', 'create']);
 
+    // AI writing assistant (used by the Email Builder)
+    Route::get('/ai/status', [\App\Http\Controllers\AiController::class, 'status'])->name('ai.status');
+    Route::post('/ai/draft', [\App\Http\Controllers\AiController::class, 'draft'])->middleware('throttle:20,1')->name('ai.draft');
+    Route::post('/ai/rewrite', [\App\Http\Controllers\AiController::class, 'rewrite'])->middleware('throttle:30,1')->name('ai.rewrite');
+    Route::post('/ai/subjects', [\App\Http\Controllers\AiController::class, 'subjects'])->middleware('throttle:20,1')->name('ai.subjects');
+
     // Integrations
     Route::get('/integrations', [\App\Http\Controllers\IntegrationController::class, 'index'])->name('integrations.index');
     Route::post('/integrations/webhook/generate', [\App\Http\Controllers\IntegrationController::class, 'generateWebhook'])->name('integrations.webhook.generate');
