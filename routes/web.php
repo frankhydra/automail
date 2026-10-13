@@ -17,10 +17,13 @@ use App\Http\Controllers\UnsubscribeController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
-// Public Welcome Page
-Route::get('/', function () {
-    return view('welcome');
-});
+// Public website (home, features, pricing, solutions). Content: config/marketing.php
+Route::get('/', [\App\Http\Controllers\MarketingController::class, 'home'])->name('home');
+Route::get('/features', [\App\Http\Controllers\MarketingController::class, 'features'])->name('marketing.features');
+Route::get('/pricing', [\App\Http\Controllers\MarketingController::class, 'pricing'])->name('marketing.pricing');
+Route::get('/for/{slug}', [\App\Http\Controllers\MarketingController::class, 'audience'])
+    ->where('slug', '[a-z]+')
+    ->name('marketing.audience');
 
 // Public webhook endpoints called by email providers to report bounces, complaints,
 // and deliveries. Not session/CSRF-protected (the provider isn't logged in) - each
